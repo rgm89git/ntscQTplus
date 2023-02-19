@@ -13,6 +13,8 @@ from scipy.ndimage.interpolation import shift
 import numpy as np
 import cv2
 
+from app import utils
+
 M_PI = math.pi
 
 Int_MIN_VALUE = -2147483648
@@ -88,6 +90,10 @@ def ringing2(img2d, power=4, shift=0, clip=True):
 
 def fmod(x: float, y: float) -> float:
     return x % y
+
+
+def clamp(n, smallest, largest):
+    return max(smallest, min(n, largest))
 
 
 class NumpyRandom:
@@ -285,6 +291,7 @@ class VHSSpeed(Enum):
 class Ntsc:
     # https://en.wikipedia.org/wiki/NTSC
     NTSC_RATE = 315000000.00 / 88 * 4  # 315/88 Mhz rate * 4
+    FSC = (227.5 * 15750.0 * 1000.0 / 1001.0)
 
     def __init__(self, precise=False, random=None):
         self.precise = precise
@@ -333,6 +340,8 @@ class Ntsc:
         self._output_vhs_tape_speed = VHSSpeed.VHS_SP
 
         self._black_line_cut = False  # Add black line glitch (credits to @rgm89git)
+
+        self.fs = 0
 
     def rand(self) -> numpy.int32:
         return self.random.nextInt(_from=0)
@@ -468,33 +477,75 @@ class Ntsc:
         else:
             return int(self._video_scanline_phase_shift_offset & 3)
 
+    def encode_composite_level(self, array: numpy.ndarray):
+        ar = array.astype(numpy.float32) / 32768.0
+        return ((0.6 * ar + 0.2) * 32768.0).astype(numpy.int32)
+    def decode_composite_level(self, array: numpy.ndarray):
+        ar = array.astype(numpy.float32) / 32768.0
+        return (((5.0 * ar - 1.0) / 3.0) * 32768.0).astype(numpy.int32)
+    
     def chroma_into_luma(self, yiq: numpy.ndarray, field: int, fieldno: int, subcarrier_amplitude: int):
         _, height, width = yiq.shape
         fY, fI, fQ = yiq
         y = field
+
         umult = numpy.tile(Ntsc._Umult, int((width / 4) + 1))
         vmult = numpy.tile(Ntsc._Vmult, int((width / 4) + 1))
+
         while y < height:
             Y = fY[y]
             I = fI[y]
             Q = fQ[y]
+
             xi = self._chroma_luma_xi(fieldno, y)
+
+            #wc = 2.0 * Ntsc.FSC / self.fs
+            #wp = 2.0 * 1300000.0 / self.fs
+            #ws = 2.0 * 3600000.0 / self.fs
+            #gpass = 3.0
+            #gstop = 20.0
+            
+            #_chroma_precorrect_lowpass = utils.iirdesign(wp, ws, gpass, gstop)
+            #_extract_chroma2x, _remove_chroma2x = utils.iirsplitter(0.5 * wc, 0.5 * wp, 0.5 * ws, gpass, gstop)
+
+            #I[:] = _chroma_precorrect_lowpass(I)
+            #Q[:] = _chroma_precorrect_lowpass(Q)
 
             chroma = I * subcarrier_amplitude * umult[xi:xi + width]
             chroma += Q * subcarrier_amplitude * vmult[xi:xi + width]
+
+            #start_phase = utils.start_phase(fY, y, Ntsc.FSC)
+
+            #phase = numpy.linspace(start=start_phase, stop=start_phase + len(I) * 2.0 * (0.5 * numpy.pi * wc), num=len(I), endpoint=False) % (2.0 * numpy.pi)
+
+            #chroma = numpy.sin(phase) * I + numpy.cos(phase) * Q
+
+            #Y[:] = Y + chroma.astype(numpy.int32)
             Y[:] = Y + chroma.astype(numpy.int32) // 50
+            Y[:] = self.encode_composite_level(Y)
+
             I[:] = 0
             Q[:] = 0
+            
             y += 2
 
     def chroma_from_luma(self, yiq: numpy.ndarray, field: int, fieldno: int, subcarrier_amplitude: int):
         _, height, width = yiq.shape
         fY, fI, fQ = yiq
+
         chroma = numpy.zeros(width, dtype=numpy.int32)
+        blackLine = numpy.zeros(width, dtype=numpy.int32)
+
+        umult = numpy.tile(Ntsc._Umult, int((width / 4) + 1))
+        vmult = numpy.tile(Ntsc._Vmult, int((width / 4) + 1))
+
         for y in range(field, height, 2):
             Y = fY[y]
             I = fI[y]
             Q = fQ[y]
+            
+            Y[:] = self.decode_composite_level(Y)
+
             sum: int = Y[0] + Y[1]
             y2 = numpy.pad(Y[2:], (0, 2))
             yd4 = numpy.pad(Y[:-2], (2, 0))
@@ -646,6 +697,10 @@ class Ntsc:
 
     def composite_layer(self, dst: numpy.ndarray, src: numpy.ndarray, field: int, fieldno: int):
         assert dst.shape == src.shape, "dst and src images must be of same shape"
+
+        ogw, ogh, channel = src.shape
+
+        self.fs = (30000.0 / 1001.0) * float(525) * float(ogw) * (858.0 / 720.0)
 
         if self._black_line_cut:
             cut_black_line_border(src)

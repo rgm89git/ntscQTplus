@@ -272,7 +272,7 @@ class DefaultRenderer(AbstractRenderer):
 
         final_audio = orig.audio
 
-        if(self.audio_process == True):
+        if(self.config.get("audio_process") == True):
             self.sendStatus.emit(f'[FFMPEG] Preparing audio filtering')
 
             #tmp_audio = self.render_data['target_file'].parent / f'tmp_audio_{self.render_data["target_file"].stem}.wav'
@@ -316,7 +316,7 @@ class DefaultRenderer(AbstractRenderer):
         temp_video_stream = ffmpeg.input(str(tmp_output.resolve()))
         # render_streams.append(temp_video_stream.video)
 
-        if self.audio_process:
+        if self.config.get("audio_process"):
             acodec = 'flac' if target_suffix == '.mkv' else 'copy'
             if (self.config.get("lossless")):
                 ff_command = ffmpeg.output(temp_video_stream.video, final_audio, result_path, shortest=None, vcodec='copy', acodec=acodec)
@@ -343,7 +343,7 @@ class DefaultRenderer(AbstractRenderer):
         self.sendStatus.emit('[FFMPEG] Audio copy done')
 
         tmp_output.unlink()
-        if self.audio_process:
+        if self.config.get("audio_process"):
             if os.path.exists(tmp_audio):
                 os.remove(tmp_audio)
 
