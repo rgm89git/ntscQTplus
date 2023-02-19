@@ -13,8 +13,6 @@ from scipy.ndimage.interpolation import shift
 import numpy as np
 import cv2
 
-from app import utils
-
 M_PI = math.pi
 
 Int_MIN_VALUE = -2147483648
@@ -499,28 +497,9 @@ class Ntsc:
 
             xi = self._chroma_luma_xi(fieldno, y)
 
-            #wc = 2.0 * Ntsc.FSC / self.fs
-            #wp = 2.0 * 1300000.0 / self.fs
-            #ws = 2.0 * 3600000.0 / self.fs
-            #gpass = 3.0
-            #gstop = 20.0
-            
-            #_chroma_precorrect_lowpass = utils.iirdesign(wp, ws, gpass, gstop)
-            #_extract_chroma2x, _remove_chroma2x = utils.iirsplitter(0.5 * wc, 0.5 * wp, 0.5 * ws, gpass, gstop)
-
-            #I[:] = _chroma_precorrect_lowpass(I)
-            #Q[:] = _chroma_precorrect_lowpass(Q)
-
             chroma = I * subcarrier_amplitude * umult[xi:xi + width]
             chroma += Q * subcarrier_amplitude * vmult[xi:xi + width]
 
-            #start_phase = utils.start_phase(fY, y, Ntsc.FSC)
-
-            #phase = numpy.linspace(start=start_phase, stop=start_phase + len(I) * 2.0 * (0.5 * numpy.pi * wc), num=len(I), endpoint=False) % (2.0 * numpy.pi)
-
-            #chroma = numpy.sin(phase) * I + numpy.cos(phase) * Q
-
-            #Y[:] = Y + chroma.astype(numpy.int32)
             Y[:] = Y + chroma.astype(numpy.int32) // 50
             Y[:] = self.encode_composite_level(Y)
 
