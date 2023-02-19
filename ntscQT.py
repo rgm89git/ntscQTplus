@@ -52,7 +52,6 @@ def main():
     #print(f"Try load {locale} locale: {locale_file}")
 
     app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QIcon("icon.png"))
     app.installTranslator(translator)
 
     if darkdetect.isDark():
