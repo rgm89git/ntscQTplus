@@ -5,6 +5,7 @@ from pathlib import Path
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QLibraryInfo
 from PyQt5.QtCore import QFile, QTextStream
+from PyQt5.QtGui import QIcon
 import darkdetect
 
 from app import NtscApp
@@ -48,13 +49,10 @@ def main():
         base_dir = Path(__file__).absolute().parent
         locale_file = str((base_dir / 'translate' / f'{locale}.qm').resolve())
 
-    print(f"Try load {locale} locale: {locale_file}")
-    if translator.load(locale_file):
-        print(f'Localization loaded: {locale}')  # name, dir
-    else:
-        print("Using default translation")
+    #print(f"Try load {locale} locale: {locale_file}")
 
     app = QtWidgets.QApplication(sys.argv)
+    app.setWindowIcon(QIcon("icon.png"))
     app.installTranslator(translator)
 
     if darkdetect.isDark():
@@ -66,6 +64,12 @@ def main():
 
     spinner.stop()
     print("Loaded.")
+
+    if translator.load(locale_file):
+        print(f'Localization loaded: {locale}')  # name, dir
+    else:
+        print("")
+        print("Using default translation")
 
     window = NtscApp()
     window.show()

@@ -14,6 +14,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1280, 852)
+        MainWindow.setWindowIcon(QtGui.QIcon("icon.png"))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setEnabled(True)
         self.centralwidget.setObjectName("centralwidget")
