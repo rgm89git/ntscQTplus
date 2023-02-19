@@ -39,7 +39,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: ntscQT
-          path: dist/windows/ntscQT.exe
+          path: dist/windows/ntscQTplus.exe
           retention-days: 2
 
 #      - name: release
