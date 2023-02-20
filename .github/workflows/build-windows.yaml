@@ -44,8 +44,9 @@ jobs:
           path: .
           spec: "ntscQT.spec"
         
-        #run: |
-        #  docker run --entrypoint /bin/sh --rm -v $GITHUB_WORKSPACE:/src cdrx/pyinstaller-windows:latest -c "python -m pip install --upgrade pip && /entrypoint.sh"
+#      - name: PyInstaller Windows
+#        run: |
+#          docker run --entrypoint /bin/sh --rm -v $GITHUB_WORKSPACE:/src cdrx/pyinstaller-windows:latest -c "python -m pip install --upgrade pip && /entrypoint.sh"
 
       - uses: actions/upload-artifact@v3
         with:
