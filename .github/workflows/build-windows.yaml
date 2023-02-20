@@ -20,6 +20,11 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - name: Select Python version
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+        
       - name: Download FFmpeg
         uses: suisei-cn/actions-download-file@v1
         id: downloadfile  # Remember to give an ID if you need the output
@@ -33,8 +38,12 @@ jobs:
           args: unzip -qq ffmpeg-4.3.1-win64.zip -d .
 
       - name: PyInstaller Windows
-        run: |
-          docker run --entrypoint /bin/sh --rm -v $GITHUB_WORKSPACE:/src cdrx/pyinstaller-windows:latest -c "python -m pip install --upgrade pip && /entrypoint.sh"
+        #run: |
+        #  docker run --entrypoint /bin/sh --rm -v $GITHUB_WORKSPACE:/src cdrx/pyinstaller-windows:latest -c "python -m pip install --upgrade pip && /entrypoint.sh"
+        uses: JackMcKew/pyinstaller-action-windows@main
+          with:
+            path: .
+            spec: "ntscQT.spec"
 
       - uses: actions/upload-artifact@v3
         with:
