@@ -39,15 +39,11 @@ jobs:
         with:
           args: unzip -qq ffmpeg-4.3.1-win64.zip -d .
 
-#      - name: PyInstaller Windows
-#        uses: JackMcKew/pyinstaller-action-windows@main
-#        with:
-#          path: .
-#          spec: ntscQT.spec
-        
       - name: PyInstaller Windows
-        run: |
-          docker run --entrypoint /bin/sh --rm -v $GITHUB_WORKSPACE:/src cdrx/pyinstaller-windows:latest -c "python -m pip install --upgrade pip && /entrypoint.sh"
+        uses: JackMcKew/pyinstaller-action-windows@main
+        with:
+          path: .
+          spec: ntscQT.spec
 
       - uses: actions/upload-artifact@v3
         with:
@@ -55,6 +51,10 @@ jobs:
           path: dist/windows/ntscQTplus.exe
           retention-days: 2
 
+#      - name: PyInstaller Windows
+#        run: |
+#          docker run --entrypoint /bin/sh --rm -v $GITHUB_WORKSPACE:/src cdrx/pyinstaller-windows:latest -c "python -m pip install --upgrade pip && /entrypoint.sh"
+#
 #      - name: release
 #        uses: actions/create-release@v1
 #        id: create_release
