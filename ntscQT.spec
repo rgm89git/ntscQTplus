@@ -4,9 +4,9 @@ block_cipher = None
 
 
 a = Analysis(['ntscQT.py'],
-             pathex=['./venv/Lib/site-packages/cv2'],
+             pathex=['c:\\Python37\\Lib\\site-packages\\cv2'],
              binaries=[
-                ('./venv/Lib/site-packages/cv2/opencv_videoio_ffmpeg*.dll', '.'),
+                ('c:\\Python37\\Lib\\site-packages\\cv2\\opencv_videoio_ffmpeg*.dll', '.'),
                 ('ffmpeg.exe', '.')
              ],
              datas=[
