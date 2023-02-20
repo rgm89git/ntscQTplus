@@ -41,9 +41,9 @@ jobs:
         #run: |
         #  docker run --entrypoint /bin/sh --rm -v $GITHUB_WORKSPACE:/src cdrx/pyinstaller-windows:latest -c "python -m pip install --upgrade pip && /entrypoint.sh"
         uses: JackMcKew/pyinstaller-action-windows@main
-          with:
-            path: .
-            spec: "ntscQT.spec"
+        with:
+          path: .
+          spec: "ntscQT.spec"
 
       - uses: actions/upload-artifact@v3
         with:
