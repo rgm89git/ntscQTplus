@@ -20,12 +20,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      - name: Select Python version
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-      - run: python --version
         
       - name: Download FFmpeg
         uses: suisei-cn/actions-download-file@v1
