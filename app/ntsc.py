@@ -51,7 +51,7 @@ def ringing(img2d, alpha=0.5, noiseSize=0, noiseValue=2, clip=True, seed=None):
         stop = int(ccol + ((1 - noiseSize) * ccol))
         noise[:, start:stop, :] = 0
         rnd = np.random.RandomState(seed)
-        mask = mask.astype(np.float) + rnd.rand(mask.shape[0], mask.shape[1], mask.shape[2]) * noise - noise / 2.
+        mask = mask.astype(float) + rnd.rand(mask.shape[0], mask.shape[1], mask.shape[2]) * noise - noise / 2.
 
     img_back = cv2.idft(np.fft.ifftshift(dft_shift * mask), flags=cv2.DFT_SCALE)
     if clip:

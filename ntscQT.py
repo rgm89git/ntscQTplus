@@ -5,6 +5,7 @@ from pathlib import Path
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QLibraryInfo
 from PyQt5.QtCore import QFile, QTextStream
+from PyQt5 import QtGui
 import darkdetect
 
 from app import NtscApp
@@ -35,6 +36,7 @@ def main():
 
     cls()
     print("ntscQT by JargeZ")
+    print("")
 
     spinner = Halo(text='Loading...',color='white')
     spinner.start()
@@ -51,6 +53,7 @@ def main():
     #print(f"Try load {locale} locale: {locale_file}")
 
     app = QtWidgets.QApplication(sys.argv)
+    app.setWindowIcon(QtGui.QIcon(QtGui.QPixmap("./icon.png")))
     app.installTranslator(translator)
 
     if darkdetect.isDark():
