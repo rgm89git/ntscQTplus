@@ -48,16 +48,19 @@ jobs:
       - name: Unzip FFmpeg
         run: 7z x ffmpeg-4.3.1-win64.zip
 
-      - name: List all files
+      - name: List all files - Before compile
         run: ls
       
       - name: PyInstaller Windows
         run: pyinstaller ntscQT.spec
 
+      - name: List all files - After compile
+        run: ls
+      
       - uses: actions/upload-artifact@v3
         with:
           name: ntscQT
-          path: dist/windows/ntscQTplus.exe
+          path: dist/ntscQTplus.exe
           retention-days: 2
 
 #      - name: PyInstaller Windows
