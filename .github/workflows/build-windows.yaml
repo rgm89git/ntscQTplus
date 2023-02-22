@@ -27,6 +27,9 @@ jobs:
           python-version: '3.9'
           cache: 'pip'
       
+      - name: Install Pyinstaller
+        run: pip install -v -U pyinstaller
+      
       - name: Install dependencies
         run: pip install -v -U -r requirements.txt
         
