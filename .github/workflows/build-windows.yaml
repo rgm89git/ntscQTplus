@@ -46,7 +46,7 @@ jobs:
           target: .
 
       - name: Unzip FFmpeg
-        run: 7z x ffmpeg-4.3.1-win64.zip -o .
+        run: 7z x ffmpeg-4.3.1-win64.zip
 
       - name: List all files
         run: ls
