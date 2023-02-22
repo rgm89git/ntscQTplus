@@ -30,9 +30,20 @@ class Ui_MainWindow(object):
         self.checkboxesLayout = QtWidgets.QGridLayout()
         self.checkboxesLayout.setObjectName("checkboxesLayout")
         self.controlLayout.addLayout(self.checkboxesLayout)
-        self.slidersLayout = QtWidgets.QVBoxLayout()
+
+        self.slidersLayoutWid = QtWidgets.QWidget()
+        self.slidersLayout = QtWidgets.QScrollArea()
+
+        self.slidersLayoutLay = QtWidgets.QVBoxLayout()
+        self.slidersLayoutWid.setLayout(self.slidersLayoutLay)
+
+        self.slidersLayout.setWidget(self.slidersLayoutWid)
+        self.slidersLayout.setWidgetResizable(True)
+
         self.slidersLayout.setObjectName("slidersLayout")
-        self.controlLayout.addLayout(self.slidersLayout)
+        self.slidersLayoutLay.setObjectName("slidersLayoutLay")
+        self.controlLayout.addWidget(self.slidersLayout)
+
         self.templatesLayout = QtWidgets.QHBoxLayout()
         self.templatesLayout.setObjectName("templatesLayout")
         self.exportImportConfigButton = QtWidgets.QPushButton(self.centralwidget)
@@ -53,6 +64,7 @@ class Ui_MainWindow(object):
         self.image_frame.setMaximumSize(QtCore.QSize(999999, 720))
         self.image_frame.setScaledContents(False)
         self.image_frame.setAlignment(QtCore.Qt.AlignCenter)
+        self.image_frame.setStyleSheet(u"background-color: rgb(0, 0, 0);\n color: rgb(255, 255, 255);")
         self.image_frame.setObjectName("image_frame")
         self.verticalLayout.addWidget(self.image_frame)
         self.positionControlLayout = QtWidgets.QHBoxLayout()
@@ -62,6 +74,13 @@ class Ui_MainWindow(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.refreshFrameButton.sizePolicy().hasHeightForWidth())
+
+        self.renderingLabel = QtWidgets.QLabel(self.centralwidget)
+        self.renderingLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.renderingLabel.setObjectName("renderingLabel")
+        self.renderingLabel.setStyleSheet(u"background-color: rgb(193, 0, 0);\n color: rgb(255, 255, 255);\n font-weight: bold;")
+        self.positionControlLayout.addWidget(self.renderingLabel)
+
         self.refreshFrameButton.setSizePolicy(sizePolicy)
         self.refreshFrameButton.setMinimumSize(QtCore.QSize(0, 0))
         self.refreshFrameButton.setMaximumSize(QtCore.QSize(27, 28))
@@ -184,6 +203,7 @@ class Ui_MainWindow(object):
         self.pauseRenderButton.setFont(font)
         self.pauseRenderButton.setFocusPolicy(QtCore.Qt.NoFocus)
         self.pauseRenderButton.setIconSize(QtCore.QSize(16, 16))
+        self.pauseRenderButton.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_MediaPause))
         self.pauseRenderButton.setCheckable(True)
         self.pauseRenderButton.setObjectName("pauseRenderButton")
         self.horizontalLayout.addWidget(self.pauseRenderButton)
@@ -201,17 +221,18 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "ntscQT"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ntscQT+"))
         MainWindow.setWindowIcon(QtGui.QIcon("./icon.png"))
         self.label.setText(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Noto Sans\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Check for updates and stargazes: <a href=\"https://github.com/JargeZ/ntscqt\"><span style=\" text-decoration: underline; color:#0057ae;\">Github/JargeZ/ntscqt</span></a></p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><b>ntscQT+</b> by <a href=\"https://codeberg.org/RGMOfficial\"><span style=\" text-decoration: none; color:#0057ae;\">RGM</span></a>. Based on <a href=\"https://github.com/JargeZ/\"><span style=\" text-decoration: none; color:#0057ae;\">JargeZ</span></a>'s work.</p></body></html>"))
         self.exportImportConfigButton.setText(_translate("MainWindow", "📝"))
         self.image_frame.setText(_translate("MainWindow", "No image/video/GIF selected. ❓"))
         self.refreshFrameButton.setText(_translate("MainWindow", "🔄"))
-        self.livePreviewCheckbox.setText(_translate("MainWindow", "LivePreview"))
+        self.livePreviewCheckbox.setText(_translate("MainWindow", "Live Preview"))
+        self.renderingLabel.setText(_translate("MainWindow", "RENDERING"))
         self.label_2.setText(_translate("MainWindow", "Render height"))
         self.NearestUpScale.setText(_translate("MainWindow", "x2 Output by nearest-neighbor"))
         self.compareModeButton.setText(_translate("MainWindow", "Compare mode"))
@@ -223,5 +244,5 @@ class Ui_MainWindow(object):
         self.openImageUrlButton.setText(_translate("MainWindow", "Open image url"))
         self.renderVideoButton.setText(_translate("MainWindow", "Render video as"))
         self.saveImageButton.setText(_translate("MainWindow", "Save image"))
-        self.pauseRenderButton.setText(_translate("MainWindow", "⏸ Pause Render"))
+        self.pauseRenderButton.setText(_translate("MainWindow", "Pause Render"))
         self.stopRenderButton.setText(_translate("MainWindow", "Stop Render"))

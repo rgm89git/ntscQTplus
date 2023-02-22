@@ -8,6 +8,9 @@ from PyQt5.QtCore import QFile, QTextStream
 from PyQt5 import QtGui
 import darkdetect
 
+import colorama
+import qdarktheme
+
 from app import NtscApp
 from app import logger
 
@@ -35,7 +38,8 @@ def main():
     locale = QtCore.QLocale.system().name()
 
     cls()
-    print("ntscQT by JargeZ")
+    print(f"{colorama.Back.BLUE + colorama.Fore.BLACK}--- ntscQT+ ---{colorama.Style.RESET_ALL}")
+    print(f"by RGM, based on JargeZ's "+'\x1B[3m'+"ntscQT"+'\x1B[0m')
     print("")
 
     spinner = Halo(text='Loading...',color='white')
@@ -56,12 +60,7 @@ def main():
     app.setWindowIcon(QtGui.QIcon(QtGui.QPixmap("./icon.png")))
     app.installTranslator(translator)
 
-    if darkdetect.isDark():
-        import ui.breeze_resources
-        darkthm = QFile(":/dark/stylesheet.qss")
-        darkthm.open(QFile.ReadOnly | QFile.Text)
-        darkthm_stream = QTextStream(darkthm)
-        app.setStyleSheet(darkthm_stream.readAll())
+    qdarktheme.setup_theme("dark")
 
     spinner.stop()
     print("Loaded.")

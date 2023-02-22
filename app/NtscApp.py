@@ -6,7 +6,7 @@ import requests
 import cv2
 import numpy
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtWidgets import QSlider, QHBoxLayout, QLabel, QCheckBox, QInputDialog, QPushButton
+from PyQt5.QtWidgets import QSlider, QHBoxLayout, QVBoxLayout, QLabel, QCheckBox, QInputDialog, QPushButton
 from numpy import ndarray
 
 from app.InterlacedRenderer import InterlacedRenderer
@@ -31,6 +31,7 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.compareMode: bool = False
         self.isRenderActive: bool = False
         self.mainEffect: bool = True
+        self.videoMode: bool = False
         self.loss_less_mode: bool = False
         self.interlaced: bool = True
         self.framecount: int = 0
@@ -49,6 +50,7 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
             "_composite_preemphasis": self.tr("Composite preemphasis"),
             "_vhs_out_sharpen": self.tr("VHS out sharpen"),
             "_vhs_edge_wave": self.tr("Edge wave"),
+            "_vhs_tracking_noise": self.tr("VHS tracking noise"),
             "_output_vhs_tape_speed": self.tr("VHS tape speed"),
             "_ringing": self.tr("Ringing"),
             "_ringing_power": self.tr("Ringing power"),
@@ -80,6 +82,7 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.add_slider("_composite_preemphasis", 0, 10, float)
         self.add_slider("_vhs_out_sharpen", 1, 5)
         self.add_slider("_vhs_edge_wave", 0, 10)
+        self.add_slider("_vhs_tracking_noise", 0, 800)
         # self.add_slider("_output_vhs_tape_speed", 0, 10)
         self.add_slider("_ringing", 0, 1, float, pro=True)
         self.add_slider("_ringing_power", 0, 10)
@@ -98,15 +101,15 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.add_slider("_head_switching_speed", 0, 100)
 
         self.add_checkbox("_vhs_head_switching", (1, 1))
-        self.add_checkbox("_color_bleed_before", (1, 2), pro=True)
+        self.add_checkbox("_color_bleed_before", (2, 2), pro=True)
         self.add_checkbox("_enable_ringing2", (2, 1), pro=True)
-        self.add_checkbox("_composite_in_chroma_lowpass", (2, 2), pro=True)
+        self.add_checkbox("_composite_in_chroma_lowpass", (3, 2), pro=True)
         self.add_checkbox("_composite_out_chroma_lowpass", (3, 1), pro=True)
-        self.add_checkbox("_composite_out_chroma_lowpass_lite", (3, 2), pro=True)
+        self.add_checkbox("_composite_out_chroma_lowpass_lite", (4, 2), pro=True)
         self.add_checkbox("_emulating_vhs", (4, 1))
-        self.add_checkbox("_nocolor_subcarrier", (4, 2), pro=True)
+        self.add_checkbox("_nocolor_subcarrier", (5, 2), pro=True)
         self.add_checkbox("_vhs_chroma_vert_blend", (5, 1), pro=True)
-        self.add_checkbox("_vhs_svideo_out", (5, 2), pro=True)
+        self.add_checkbox("_vhs_svideo_out", (6, 2), pro=True)
         self.add_checkbox("_output_ntsc", (6, 1), pro=True)
         self.add_checkbox("_black_line_cut", (1, 2), pro=False)
 
@@ -139,9 +142,20 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         presets = [18, 31, 38, 44]
         self.seedSpinBox.setValue(presets[randint(0, len(presets) - 1)])
 
+        self.renderingLabel.hide()
+
         self.progressBar.setValue(0)
         self.progressBar.setMinimum(1)
         self.progressBar.hide()
+
+        self.videoTrackSlider.blockSignals(True)
+        self.videoTrackSlider.hide()
+        self.livePreviewCheckbox.hide()
+
+        self.label_2.hide()
+        self.renderHeightBox.hide()
+        self.seedLabel.hide()
+        self.seedSpinBox.hide()
 
         self.add_builtin_templates()
 
@@ -204,7 +218,7 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def increment_progress(self):
-        self.progressBar.setValue(self.progressBar.value() + 1)
+        self.progressBar.setValue(self.progressBar.value()+1)
 
     @QtCore.pyqtSlot()
     def toggle_compare_mode(self):
@@ -288,8 +302,22 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
 
         if is_render_active:
             self.progressBar.show()
+            self.renderingLabel.show()
+            if self.videoMode:
+                self.videoTrackSlider.hide()
+                self.label_2.hide()
+                self.renderHeightBox.hide()
+                self.seedLabel.hide()
+                self.seedSpinBox.hide()
         else:
             self.progressBar.hide()
+            self.renderingLabel.hide()
+            if self.videoMode:
+                self.videoTrackSlider.show()
+                self.label_2.show()
+                self.renderHeightBox.show()
+                self.seedLabel.show()
+                self.seedSpinBox.show()
 
         self.NearestUpScale.setEnabled(not is_render_active)
 
@@ -349,7 +377,8 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
                 frame.hide()
 
     def add_slider(self, param_name, min_val, max_val, slider_value_type: Union[int, float] = int, pro=False):
-        ly = QHBoxLayout()
+        ly = QVBoxLayout()
+        ly.setSpacing(0)
         slider_frame = QtWidgets.QFrame()
         slider_frame.setLayout(ly)
 
@@ -397,7 +426,7 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         ly.addWidget(value_label)
 
         self.nt_controls[param_name] = slider
-        self.slidersLayout.addWidget(slider_frame)
+        self.slidersLayoutLay.addWidget(slider_frame)
 
     def get_current_video_frames(self):
         preview_h = self.renderHeightBox.value()
@@ -467,7 +496,10 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
     def open_file(self):
         file = QtWidgets.QFileDialog.getOpenFileName(self, "Select File")
         if file:
-            path = Path(file[0])
+            if file[0] != "":
+                path = Path(file[0])
+            else:
+                return None
         else:
             return None
         file_suffix = path.suffix.lower()
@@ -481,7 +513,16 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         else:
             self.update_status(f"Unsupported file type {file_suffix}")
 
+    def prepare_input_blocks(self):
+        self.label_2.show()
+        self.renderHeightBox.show()
+        self.seedLabel.show()
+        self.seedSpinBox.show()
+        self.livePreviewCheckbox.show()
+    
     def set_video_mode(self):
+        self.prepare_input_blocks()
+        self.videoMode = True
         self.videoTrackSlider.blockSignals(False)
         self.videoTrackSlider.show()
         self.pauseRenderButton.show()
@@ -490,6 +531,8 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.renderVideoButton.show()
 
     def set_image_mode(self):
+        self.prepare_input_blocks()
+        self.videoMode = False
         self.videoTrackSlider.blockSignals(True)
         self.videoTrackSlider.hide()
         self.pauseRenderButton.hide()
@@ -532,6 +575,17 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
             setattr(self.nt, parameter_name, value)
 
         self.sync_nt_to_sliders()
+    
+    def round_framecount(self, framecount: int):
+        logger.debug("Checking framecount...")
+
+        frame = 0
+        framed = 0
+        while frame < framecount:
+            frame += 2
+            framed += 1
+        
+        return framed
 
     def open_video(self, path: Path):
         self.setup_renderer()
@@ -550,10 +604,14 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         
         if(self.interlaced):
             self.videoTrackSlider.setSingleStep(2)
-            self.framecount = self.input_video["frames_count"] // 2
+            self.framecount = self.round_framecount(self.input_video["frames_count"])
         else:
             self.videoTrackSlider.setSingleStep(1)
             self.framecount = self.input_video["frames_count"]
+        
+        self.videoRenderer.framecount = self.framecount
+
+        logger.debug(f"Framecount: {self.videoRenderer.framecount}")
 
         logger.debug(f"selfinput: {self.input_video}")
         self.orig_wh = (int(self.input_video["width"]), int(self.input_video["height"]))
@@ -596,6 +654,8 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
             "input_video": self.input_video,
             "input_heigth": self.renderHeightBox.value(),
             "upscale_2x": self.NearestUpScale.isChecked(),
+            "lossless": self.videoRenderer.lossless,
+            "framecount": self.framecount
         }
         self.setup_renderer()
         self.toggle_main_effect()

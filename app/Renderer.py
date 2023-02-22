@@ -54,6 +54,9 @@ class DefaultRenderer(AbstractRenderer):
     show_frame_index = 0
     cap = None
     interlaced = False
+    lossless = True
+    framecount: int = 0
+    videoend: int = 0
     buffer: dict[int, ndarray] = defaultdict(lambda: None)
 
     @staticmethod
@@ -78,15 +81,44 @@ class DefaultRenderer(AbstractRenderer):
         current_index = self.current_frame_index
 
         if buf[current_index] is None:
-            current_frame = self.cap.read()
+            if self.interlaced:
+                self.capdetect.set(1, current_index)
+                _, cframe = self.capdetect.read()
+                #print("Current frame - Cap detect")
+                current_frame = cframe
+            else:
+                current_frame = self.cap.read()
         else:
             current_frame = buf[current_index]
-        next_frame = self.cap.read()
+        #print("Current frame")
+        
+        if (self.framecount % 2 == 0):
+            framefortwo = True
+        else:
+            framefortwo = False
+
+        if self.interlaced:
+            self.capdetect.set(1, current_index+1)
+            _, cframe = self.capdetect.read()
+            #print("Next frame - Cap detect")
+            next_frame = cframe
+            self.capdetect.set(1, current_index)
+        else:
+            next_frame = self.cap.read()
+        
+        #print("Next frame")
+        #if next_frame is None and self.interlaced and framefortwo != True and self.videoend == 0:
+        #    next_frame = current_frame
+        #    self.videoend = 1
 
         if current_index > 0:
             del buf[current_index-1]
         buf[current_index] = current_frame
+        #print("Buf current:")
+        #print(buf[current_index])
         buf[current_index+1] = next_frame
+        #print("Buf next:")
+        #print(buf[current_index+1])
 
     def prepare_frame(self, frame):
         orig_wh = self.config.get("orig_wh")
@@ -168,7 +200,8 @@ class DefaultRenderer(AbstractRenderer):
             render_wh=render_wh,
             orig_wh=orig_wh,
 
-            lossless=False,
+            lossless=self.render_data["lossless"],
+            framecount=self.render_data["framecount"],
             next_frame_context=True,
 
             audio_process=False,
@@ -177,12 +210,33 @@ class DefaultRenderer(AbstractRenderer):
             audio_noise_volume=0.03,
         )
 
+    def update_check(self, cap, frameindex):
+        cap.set(1, frameindex)
+        checkframe1, _ = cap.read()
+        #cap.set(1, frameindex+1)
+        #checkframe2, _ = cap.read()
+        #cap.set(1, frameindex)
+
+        return checkframe1
+    
+    def check_frame_stops(self, frameindex, framecount):
+        if((frameindex > framecount) or (frameindex+1 > framecount)):
+            return framecount
+        return frameindex
+    
+    def update_chromaencoding(self, nt: Ntsc, frameindex):
+        if (frameindex % 2 != 0):
+            nt._video_scanline_phase_shift_offset = 2
+        else:
+            nt._video_scanline_phase_shift_offset = 0
 
     def run(self):
         self.set_up()
         self.running = True
 
         suffix = '.mkv'
+
+        print(self.config.get("lossless"))
 
         tmp_output = self.render_data['target_file'].parent / f'tmp_{self.render_data["target_file"].stem}{suffix}'
 
@@ -200,10 +254,11 @@ class DefaultRenderer(AbstractRenderer):
         
         if (self.interlaced):
             framerate = self.render_data["input_video"]["orig_fps"] / 2
-            framecount = self.render_data["input_video"]["frames_count"] // 2
         else:
             framerate = self.render_data["input_video"]["orig_fps"]
-            framecount = self.render_data["input_video"]["frames_count"]
+        
+        self.framecount = self.config.get("framecount")
+        print(self.framecount)
         
         video = cv2.VideoWriter()
 
@@ -231,31 +286,50 @@ class DefaultRenderer(AbstractRenderer):
             queue_size=322
         ).start()
 
-        while self.cap.more():
+        self.capdetect = self.render_data["input_video"]["cap"]
+
+        checkframe = self.update_check(self.capdetect,self.current_frame_index)
+
+        while self.running:
             if self.pause:
                 self.sendStatus.emit(f"{status_string} [P]")
                 time.sleep(0.3)
                 continue
             
+            if checkframe is False:
+                logger.info(f"Video end or render error {status_string}")
+                break
+                
+            self.update_chromaencoding(self.render_data.get("nt"),self.show_frame_index)
+            #print("Full chroma encode")
+            
             self.update_buffer()
             frame = self.produce_frame()
+            #print(frame)
 
             status_string = '[CV2] Render progress: {current_frame_index}/{total}'.format(
                 current_frame_index=self.show_frame_index,
-                total=framecount,
+                total=(self.framecount),
             )
-            if frame is False:
-                logger.info(f"Video end or render error {status_string}")
-                break
+            #print("Status string")
+            #if frame is False:
+            #    logger.info(f"Video end or render error {status_string}")
+            #    break
             
             if self.interlaced:
                 self.current_frame_index += 2
             else:
                 self.current_frame_index += 1
             self.show_frame_index += 1
+            #print("Change frames")
 
             self.sendStatus.emit(status_string)
+            #print("Writing video")
             video.write(frame)
+
+            #self.current_frame_index = self.check_frame_stops(self.current_frame_index,self.framecount)
+
+            checkframe = self.update_check(self.capdetect,self.current_frame_index)
 
         video.release()
 

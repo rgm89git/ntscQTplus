@@ -302,6 +302,8 @@ class Ntsc:
 
         self._vhs_edge_wave = 0  # 0..10
 
+        self._vhs_tracking_noise = 50 #0..800
+
         self._vhs_head_switching = False  # turn this on only on frames height 486 pixels or more
         self._head_switching_speed = 0  # 0..100 this is /1000 increment for _vhs_head_switching_point 0 is static
         self._vhs_head_switching_point = 1.0 - (4.5 + 0.01) / 262.5  # 4 scanlines NTSC up from vsync
@@ -437,14 +439,19 @@ class Ntsc:
         y = int(p // twidth * 2) + field
         p = int(fmod(self._vhs_head_switching_phase + noise, 1.0) * t)
         x = p % twidth
-        y -= (262 - 240) * 2 if self._output_ntsc else (312 - 288) * 2
+        y -= (258 - 240) * 2 if self._output_ntsc else (312 - 288) * 2
         tx = x
         ishif = x - twidth if x >= twidth // 2 else x
         shif = 0
+        trackmult = (32768 - (32768 / 3))
         while y < height:
             if y >= 0:
                 Y = fY[y]
                 if shif != 0:
+                    if self._output_ntsc:
+                        self.vhs_tracking_error_mini(channel=Y,mult=trackmult)
+                        trackmult /= 2
+
                     tmp = numpy.zeros(twidth)
                     x2 = (tx + twidth + shif) % twidth
                     tmp[:width] = Y
@@ -644,6 +651,40 @@ class Ntsc:
             if rnds[y] != 0:
                 shift = rnds[y]
                 Q[:] = numpy.pad(Q, (shift, 0))[:-shift]
+    
+    def vhs_tracking_error_mini(self, channel: numpy.ndarray, mult: int = 32768):
+        width = channel.shape[0]
+
+        startx = random.Random().randint(0, width)
+
+        multsub = random.Random().uniform(0.86, 0.9)
+        x = 0
+        while x < width:
+            if x >= startx:
+                if mult > 0:
+                    channel[x] += mult
+                    mult *= multsub
+            x += 1
+    def vhs_tracking_error(self, yiq: numpy.ndarray, field: int = 0, amount: int = 50):
+        _, height, width = yiq.shape
+        fY, fI, fQ = yiq
+
+        for y in range(field, height, 2):
+            pY = fY[y]
+            pI = fI[y]
+            pQ = fQ[y]
+            if self.rand() % 100000 < amount:
+                startx = random.Random().randint(0, width)
+
+                mult = 32768
+                multsub = random.Random().uniform(0.86, 0.9)
+                x = 0
+                while x < width:
+                    if x >= startx:
+                        if mult > 0:
+                            pY[x] += mult
+                            mult *= multsub
+                    x += 1
 
     def vhs_chroma_loss(self, yiq: numpy.ndarray, field: int, video_chroma_loss: int):
         _, height, width = yiq.shape
@@ -661,6 +702,8 @@ class Ntsc:
             self.vhs_edge_wave(yiq, field)
 
         self.vhs_luma_lowpass(yiq, field, vhs_speed.luma_cut)
+
+        self.vhs_tracking_error(yiq, field, self._vhs_tracking_noise)
 
         self.vhs_chroma_lowpass(yiq, field, vhs_speed.chroma_cut, vhs_speed.chroma_delay)
 
@@ -774,6 +817,7 @@ def random_ntsc(seed=None) -> Ntsc:
     ntsc._video_noise = int(rnd.triangular(0, 4200, 2))
     ntsc._emulating_vhs = rnd.random() < 0.2  # lean towards default value
     ntsc._vhs_edge_wave = int(rnd.triangular(0, 5, 0))
+    ntsc._vhs_tracking_noise = int(rnd.triangular(0, 800, 2))
     ntsc._video_scanline_phase_shift = rnd.choice([0, 90, 180, 270])
     ntsc._video_scanline_phase_shift_offset = rnd.randint(0, 3)
     ntsc._output_vhs_tape_speed = rnd.choice([VHSSpeed.VHS_SP, VHSSpeed.VHS_LP, VHSSpeed.VHS_EP])

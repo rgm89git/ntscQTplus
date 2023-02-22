@@ -23,8 +23,17 @@ class Ui_TemplateConfigDialog(object):
         self.configJsonTextField.setGeometry(QtCore.QRect(10, 10, 381, 221))
         self.configJsonTextField.setObjectName("configJsonTextField")
         self.copyConfigButton = QtWidgets.QPushButton(TemplateConfigDialog)
-        self.copyConfigButton.setGeometry(QtCore.QRect(10, 240, 228, 51))
+        self.copyConfigButton.setGeometry(QtCore.QRect(10, 240, 113, 51))
+        self.copyConfigButton.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_TitleBarNormalButton))
         self.copyConfigButton.setObjectName("copyConfigButton")
+        self.exportConfigButton = QtWidgets.QPushButton(TemplateConfigDialog)
+        self.exportConfigButton.setGeometry(QtCore.QRect(128, 267, 113, 23))
+        self.exportConfigButton.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogSaveButton))
+        self.exportConfigButton.setObjectName("exportConfigButton")
+        self.openConfigButton = QtWidgets.QPushButton(TemplateConfigDialog)
+        self.openConfigButton.setGeometry(QtCore.QRect(128, 240, 113, 23))
+        self.openConfigButton.setIcon(self.style().standardIcon(QtWidgets.QStyle.SP_DialogOpenButton))
+        self.openConfigButton.setObjectName("openConfigButton")
 
         self.retranslateUi(TemplateConfigDialog)
         self.buttonBox.rejected.connect(TemplateConfigDialog.reject)
@@ -33,5 +42,8 @@ class Ui_TemplateConfigDialog(object):
 
     def retranslateUi(self, TemplateConfigDialog):
         _translate = QtCore.QCoreApplication.translate
-        TemplateConfigDialog.setWindowTitle(_translate("TemplateConfigDialog", "Dialog"))
+        TemplateConfigDialog.setWindowTitle(_translate("TemplateConfigDialog", "Customize your preset"))
         self.copyConfigButton.setText(_translate("TemplateConfigDialog", "Copy"))
+        self.exportConfigButton.setText(_translate("TemplateConfigDialog", "Export"))
+        self.openConfigButton.setText(_translate("TemplateConfigDialog", "Open"))
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Save).setText(_translate("TemplateConfigDialog", "Done"))
