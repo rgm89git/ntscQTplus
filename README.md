@@ -192,11 +192,6 @@ pip install --ignore-installed -r requirements.m1-temp.txt
 venv/bin/python ntscQT.py
 ```
 
-<p align="center">
-	An fork made with love by <a href="https://rgmneocities.neocities.org/">RGM</a>, in :brazil:
-   <h6><i>Website above in Portuguese</i></h6>
-</p>
-
 ### About ntscQT+ on Termux 
 *At this moment ntscQT+ is **not supported on Termux even with proot-distro utility**. Maybe ntscQT+ is runnable on Termux but **there is no method to make it work**.*
 
@@ -220,6 +215,11 @@ I want to thanks these people.
 - [**zhuker**](https://github.com/zhuker) for the original [Python port](https://github.com/zhuker/ntsc).
 - [**joncampbell123**](https://github.com/joncampbell123) for the original [C++ script](https://github.com/joncampbell123/composite-video-simulator).
 - [**5yutan5**](https://github.com/5yutan5) for the new [theme](https://github.com/5yutan5/PyQtDarkTheme).
+
+<p align="center">
+	An fork made with love by <a href="https://rgmneocities.neocities.org/">RGM</a>, in :brazil:
+   <h6><i>Website above in Portuguese</i></h6>
+</p>
 
 <hr />
 
