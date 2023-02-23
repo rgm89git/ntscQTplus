@@ -1,6 +1,5 @@
-[<img src="docs/logo/fulllogo_white.svg" height="128">](https://0hz.ru/ntscqt/)
 <p align="center">
-   <img src="docs/logo/fulllogo_white.svg" alt="ntscQT+" style="height: 128px;" height="128px">
+   <img src="docs/logo/fulllogo_white.svg" alt="ntscQT+" style="height: 64px;" height="64px">
 </p>
 
 <p align="center">
