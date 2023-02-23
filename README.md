@@ -217,8 +217,8 @@ I want to thanks these people.
 - [**5yutan5**](https://github.com/5yutan5) for the new [theme](https://github.com/5yutan5/PyQtDarkTheme).
 
 <div align="center">
-   <p style="margin-bottom: 0px;">An fork made with love by <a href="https://rgmneocities.neocities.org/">RGM</a>, in :brazil:</p>
-   <h6 align="center" style="margin-top: 0px;"><i>Website above in Portuguese</i></h6>
+   <span>An fork made with love by <a href="https://rgmneocities.neocities.org/">RGM</a>, in :brazil:</span>
+   <span><sub><i>Website above in Portuguese</i></sub></span>
 </div>
 
 <hr />
