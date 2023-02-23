@@ -143,7 +143,10 @@ You can [download latest version here](https://github.com/JargeZ/ntsc/releases/l
 
 #### For Mac OS X and Linux
 
-Thanks for [Robot Riot Records](https://linktr.ee/robotriot) for donation which motivated to make MacOS fixes
+Credits for [**Robot Riot Records**](https://linktr.ee/robotriot) for the donation that motivated [**JargeZ**](https://github.com/JargeZ) to make MacOS fixes to the original **ntscQT**.
+
+These fixes may work in **ntscQT+**.
+
 1. Open your terminal of preference.
 2. **For Mac OS users:** If not already installed, install Homebrew: [brew.sh](https://brew.sh/)
 3. Install FFMPEG *(necessary)*:
