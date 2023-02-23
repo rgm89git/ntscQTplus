@@ -193,7 +193,7 @@ venv/bin/python ntscQT.py
 ```
 
 <p align="center">
-	An fork made with love by <a href="https://rgmneocities.neocities.org/"> RGM </a>, in :br:
+	An fork made with love by <a href="https://rgmneocities.neocities.org/">RGM</a>, in :brazil:
    <h6><i>Website above in Portuguese</i></h6>
 </p>
 
