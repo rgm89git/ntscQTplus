@@ -19,7 +19,8 @@ class InterlacedRenderer(DefaultRenderer):
         frame1 = cv2.convertScaleAbs(frame1)
 
         # Using warpAffine temporary while finding another fix
-        frame2 = cv2.warpAffine(frame2, numpy.float32([[1, 0, 0], [0, 1, 1]]), (frame2.shape[1], frame2.shape[0]+2))
+        #frame2 = cv2.warpAffine(frame2, numpy.float32([[1, 0, 0], [0, 1, 1]]), (frame2.shape[1], frame2.shape[0]+2))
+        frame2 = cv2.copyMakeBorder(frame2,1,0,0,0,cv2.BORDER_CONSTANT)
         frame2 = nt.composite_layer(frame2, frame2, field=2, fieldno=2)
         frame2 = cv2.convertScaleAbs(frame2)
         frame = frame1
