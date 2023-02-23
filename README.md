@@ -1,9 +1,9 @@
 <p align="center">
-   <img src="docs/logo/fulllogo_white.svg" alt="ntscQT+" style="height: 64px;" height="64px">
+   <img src="docs/logo/fulllogo_white.svg" alt="ntscQT+" style="height: 80px;" height="80px">
 </p>
 
 <p align="center">
-   An analog video emulator in only <b>ONE</b> executable.<br>Based on [JargeZ](https://github.com/JargeZ/ntscqt) and [zhuker](https://github.com/zhuker/ntsc)'s work.
+   An analog video emulator in only <b>ONE</b> executable.<br>Based on <a href="https://github.com/JargeZ/ntscqt">JargeZ</a> and <a href="https://github.com/zhuker/ntsc">zhuker</a>'s work.
 </p>
 
 <div align="center">
