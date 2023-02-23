@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-   An analog video emulator in only <b>ONE</b> executable.<br>Based on <a href="https://github.com/JargeZ/ntscqt">JargeZ</a> and <a href="https://github.com/zhuker/ntsc">zhuker</a>'s work.
+   An analog video emulator in only <b>ONE</b> executable.<br>Based on <a href="https://github.com/JargeZ/ntscqt"><b>JargeZ</b></a> and <a href="https://github.com/zhuker/ntsc"><b>zhuker</b></a>'s work.
 </p>
 
 <div align="center">
@@ -217,7 +217,7 @@ I want to thanks these people.
 - [**5yutan5**](https://github.com/5yutan5) for the new [theme](https://github.com/5yutan5/PyQtDarkTheme).
 
 <div align="center">
-   <span>An fork made with love by <a href="https://rgmneocities.neocities.org/">RGM</a>, in :brazil:</span><br>
+   <span>An fork made with love by <a href="https://rgmneocities.neocities.org/"><b>RGM</b></a>, in :brazil:</span><br>
    <span><sub><i>Website above in Portuguese</i></sub></span>
 </div>
 
