@@ -218,7 +218,7 @@ I want to thanks these people.
 
 <p align="center">
 	An fork made with love by <a href="https://rgmneocities.neocities.org/">RGM</a>, in :brazil:
-   <h6 align="center"><i>Website above in Portuguese</i></h6>
+   <h6 align="center" style="margin-top: 0px;"><i>Website above in Portuguese</i></h6>
 </p>
 
 <hr />
