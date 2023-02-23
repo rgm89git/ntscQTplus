@@ -25,9 +25,7 @@
 ---
 
 ![Big Buck Bunny](docs/img/bigbuckbunny1.png)
-![example](https://i.imgur.com/nn92Jmp.jpg)
-
-<div align="center">
+![example](docs/img/bigbuckbunny2.png)
 
 ## ❓ What changed?
 
@@ -38,6 +36,8 @@ Let's address that changed since the last original ntscQT release.
 - You can import and export presets on **JSON** files.
 - A lossless [FFV1](https://en.wikipedia.org/wiki/FFV1)/[Matroska](https://www.matroska.org/) rendering function.
 - **Better** image detail and **interlacing**, for a **best** simulation.
+
+<div align="center">
 
 ## :video_camera: Demo
 
