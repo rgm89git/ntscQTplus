@@ -24,8 +24,12 @@
 
 ---
 
+<div align="center">
+
 ![Big Buck Bunny](docs/img/bigbuckbunny1.png)
 ![example](docs/img/bigbuckbunny2.png)
+
+</div>
 
 ## ❓ What changed?
 
@@ -37,9 +41,9 @@ Let's address that changed since the last original ntscQT release.
 - A lossless [FFV1](https://en.wikipedia.org/wiki/FFV1)/[Matroska](https://www.matroska.org/) rendering function.
 - **Better** image detail and **interlacing**, for a **best** simulation.
 
-<div align="center">
-
 ## :video_camera: Demo
+
+<div align="center">
 
 *There is a full section of videos and things that used the original **ntscQT**.*
 
