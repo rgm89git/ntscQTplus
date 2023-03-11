@@ -214,7 +214,8 @@ I want to thanks these people.
 - [**JargeZ**](https://github.com/JargeZ) for the original **ntscQT**.
 - [**zhuker**](https://github.com/zhuker) for the original [Python port](https://github.com/zhuker/ntsc).
 - [**joncampbell123**](https://github.com/joncampbell123) for the original [C++ script](https://github.com/joncampbell123/composite-video-simulator).
-- [**5yutan5**](https://github.com/5yutan5) for the new [theme](https://github.com/5yutan5/PyQtDarkTheme).
+- [**5yutan5**](https://github.com/5yutan5) for the new [theme](https://github.com/5yutan5/PyQtDarkTheme).<br>
+<span><sub><i>The svg files for the PyQtDarkTheme are derived Material design icons(Apache License Version 2.0). Qt stylesheets are originally fork of QDarkStyleSheet(MIT License). Other files are covered by PyQtDarkTheme's MIT license. The accent detector(qdarktheme/_os_appearance/_accent/_mac_detect) is inspired by darkdetect(3-clause BSD License).</i></sub></span>
 
 <div align="center">
    <span>An fork made with love by <a href="https://rgmneocities.neocities.org/"><b>RGM</b></a>, in :brazil:</span><br>
