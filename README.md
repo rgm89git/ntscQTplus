@@ -67,7 +67,7 @@ Let's address that changed since the last original ntscQT release.
 
 <div align="center">
 
-[![How to Use](https://img.shields.io/badge/-How%20to%20Use-informational?label=&style=for-the-badge?logoWidth=150)](https://rentry.co/ntscqtplustutorial)
+[![How to Use](https://img.shields.io/badge/-How%20to%20Use-informational?label=&style=for-the-badge&logoWidth=150)](https://rentry.co/ntscqtplustutorial)
 
 </div>
 
