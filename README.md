@@ -12,6 +12,7 @@
 [![Downloads](https://img.shields.io/github/downloads/JargeZ/ntscqt/total?style=for-the-badge&color=blue)](https://github.com/JargeZ/ntscqt/releases/latest) -->
 [![Commits](https://img.shields.io/github/commit-activity/m/rgm89git/ntscQTplus?label=commits&style=flat-square)](https://github.com/rgm89git/ntscQTplus/commits)
 [![Last Commit](https://img.shields.io/github/last-commit/rgm89git/ntscQTplus/main?label=&style=flat-square)](https://github.com/rgm89git/ntscQTplus/commits)
+[![How to Use](https://img.shields.io/badge/-How%20to%20Use-informational?label=&style=flat-square)](https://rentry.co/ntscqtplustutorial)
 <!-- [![Website](https://img.shields.io/badge/-WEBSITE-blue?label=&style=for-the-badge)](https://0hz.ru/ntscqt/) -->
 
 </div>
@@ -221,6 +222,8 @@ I want to thanks these people.
    <span>An fork made with love by <a href="https://rgmneocities.neocities.org/"><b>RGM</b></a>, in :brazil:</span><br>
    <span><sub><i>Website above in Portuguese</i></sub></span>
 </div>
+
+<span><sub><i>Big Buck Bunny is licensed under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0</a> by the Blender Institute.</i></sub></span>
 
 <hr />
 
