@@ -8,11 +8,13 @@
 
 <div align="center">
 
-<!-- [![Release version](https://img.shields.io/github/v/release/JargeZ/ntscqt?color=blue&label=&style=for-the-badge)](https://github.com/JargeZ/ntscqt/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/JargeZ/ntscqt/total?style=for-the-badge&color=blue)](https://github.com/JargeZ/ntscqt/releases/latest) -->
+[![Release version](https://img.shields.io/github/v/release/JargeZ/ntscqt?color=blue&label=&style=for-the-badge)](https://github.com/JargeZ/ntscqt/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/JargeZ/ntscqt/total?style=for-the-badge&color=blue)](https://github.com/JargeZ/ntscqt/releases/latest)
 [![Commits](https://img.shields.io/github/commit-activity/m/rgm89git/ntscQTplus?label=commits&style=flat-square)](https://github.com/rgm89git/ntscQTplus/commits)
 [![Last Commit](https://img.shields.io/github/last-commit/rgm89git/ntscQTplus/main?label=&style=flat-square)](https://github.com/rgm89git/ntscQTplus/commits)
 [![How to Use](https://img.shields.io/badge/-How%20to%20Use-informational?label=&style=flat-square)](https://rentry.co/ntscqtplustutorial)
+[![Download](https://img.shields.io/badge/-Releases-red?label=&style=flat-square)](https://github.com/rgm89git/ntscQTplus/releases)
+
 <!-- [![Website](https://img.shields.io/badge/-WEBSITE-blue?label=&style=for-the-badge)](https://0hz.ru/ntscqt/) -->
 
 </div>
@@ -67,13 +69,15 @@ Let's address that changed since the last original ntscQT release.
 
 <div align="center">
 
-[![How to Use](https://img.shields.io/badge/-How%20to%20Use-informational?label=&style=for-the-badge&logoWidth=150)](https://rentry.co/ntscqtplustutorial)
+[![How to Use](https://img.shields.io/badge/-How%20to%20Use-informational?label=&style=for-the-badge&logoWidth=500)](https://rentry.co/ntscqtplustutorial)
 
 </div>
 
 ## :floppy_disk: Installation
 
-*At the moment, there is no release of **ntscQT+**, but you can find older versions of the original **ntscQT** in [JargeZ/ntscQT](https://github.com/JargeZ/ntscqt).*
+***Download from this Releases button***
+
+[![Download](https://img.shields.io/badge/-Releases-red?label=&style=for-the-badge&logoWidth=500)](https://github.com/rgm89git/ntscQTplus/releases)
 
 *If you want to use **ntscQT+**, you can compile using the instructions below.*
 
