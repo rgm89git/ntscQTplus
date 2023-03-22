@@ -316,7 +316,7 @@ class Ntsc:
         self._ringing = 1.0  # 1 = no ringing, 0.3..0.99 = sane values
         self._enable_ringing2 = False
         self._ringing_power = 2
-        self._ringing_shift = 0
+        self._ringing_shift = 0.0
         self._freq_noise_size = 0  # (0-1) optimal values  is 0.5..0.99 if noiseSize=0 - no noise
         self._freq_noise_amplitude = 2  # noise amplitude  (0-5) optimal values  is 0.5-2
         self._composite_in_chroma_lowpass = True  # apply chroma lowpass before composite encode
