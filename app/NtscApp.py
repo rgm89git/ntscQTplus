@@ -540,20 +540,20 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
         self.livePreviewCheckbox.hide()
         self.renderVideoButton.hide()
 
-    def set_render_heigth(self, height):
+    def set_render_height(self, height):
         if height > 600:
             self.renderHeightBox.setValue(600)
             self.update_status(
                 self.tr('The image resolution is large. For the best effect, the output height is set to 600'))
         else:
-            self.renderHeightBox.setValue(height // 120 * 120)
+            self.renderHeightBox.setValue(height)
 
     def open_image(self, img: numpy.ndarray):
         self.setup_renderer()
         height, width, channels = img.shape
         self.orig_wh = width, height
 
-        self.set_render_heigth(height)
+        self.set_render_height(height)
 
         self.set_current_frames(img)
 
@@ -615,7 +615,7 @@ class NtscApp(QtWidgets.QMainWindow, mainWindow.Ui_MainWindow):
 
         logger.debug(f"selfinput: {self.input_video}")
         self.orig_wh = (int(self.input_video["width"]), int(self.input_video["height"]))
-        self.set_render_heigth(self.input_video["height"])
+        self.set_render_height(self.input_video["height"])
         self.set_current_frames(*self.get_current_video_frames())
         self.videoTrackSlider.setMinimum(1)
         self.videoTrackSlider.setMaximum(self.input_video["frames_count"])
