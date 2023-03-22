@@ -63,6 +63,14 @@ Let's address that changed since the last original ntscQT release.
 
 </div>
 
+## How to Use
+
+<div align="center">
+
+[![How to Use](https://img.shields.io/badge/-How%20to%20Use-informational?label=&style=for-the-badge)](https://rentry.co/ntscqtplustutorial)
+
+</div>
+
 ## :floppy_disk: Installation
 
 *At the moment, there is no release of **ntscQT+**, but you can find older versions of the original **ntscQT** in [JargeZ/ntscQT](https://github.com/JargeZ/ntscqt).*
