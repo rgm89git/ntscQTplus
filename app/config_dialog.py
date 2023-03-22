@@ -50,8 +50,8 @@ class ConfigDialog(QDialog, configExportDialog.Ui_TemplateConfigDialog):
     def clickedExport(self):
         exportFile = QtWidgets.QFileDialog.getSaveFileName(self, caption="Export JSON", directory=".", filter="JSON (*.json)")
         if exportFile:
-            if openFile[0] != "":
-                path = Path(openFile[0])
+            if exportFile[0] != "":
+                path = Path(exportFile[0])
 
                 logger.debug(f"Exporting preset to {path}")
                 fileContents = self.configJsonTextField.toPlainText()
