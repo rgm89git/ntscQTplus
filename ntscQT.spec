@@ -6,8 +6,8 @@ block_cipher = None
 
 a = Analysis(
     ['ntscQT.py'],
-    pathex=['C:/hostedtoolcache/windows/python/3.10.10/x64/lib/site-packages'],
-    binaries=[('C:/hostedtoolcache/windows/python/3.10.10/x64/lib/site-packages/cv2/opencv_videoio_ffmpeg*.dll', '.'), ('./ffmpeg.exe', '.')],
+    pathex=['C:/hostedtoolcache/windows/python/3.10.11/x64/lib/site-packages'],
+    binaries=[('C:/hostedtoolcache/windows/python/3.10.11/x64/lib/site-packages/cv2/opencv_videoio_ffmpeg*.dll', '.'), ('./ffmpeg.exe', '.')],
     datas=[('./app/ringPattern.npy', './app'), ('translate/*.qm', 'translate/'), ('./icon.png', '.')],
     hiddenimports=[],
     hookspath=[],
