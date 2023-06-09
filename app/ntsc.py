@@ -288,8 +288,13 @@ class VHSSpeed(Enum):
 
 class Ntsc:
     # https://en.wikipedia.org/wiki/NTSC
+    FS = 315000000.00 / 88
     NTSC_RATE = 315000000.00 / 88 * 4  # 315/88 Mhz rate * 4
-    FSC = (227.5 * 15750.0 * 1000.0 / 1001.0)
+
+    SYNCH_LEVEL = -40.0
+    BLANKING_LEVEL = 0.0
+    BLACK_LEVEL = (7.5/100.0)
+    WHITE_LEVEL = (100.0/100.0)
 
     def __init__(self, precise=False, random=None):
         self.precise = precise
@@ -483,17 +488,21 @@ class Ntsc:
             return int(self._video_scanline_phase_shift_offset & 3)
 
     def encode_composite_level(self, array: numpy.ndarray):
-        ar = array.astype(numpy.float32) / 32768.0
-        return ((0.6 * ar + 0.2) * 32768.0).astype(numpy.int32)
+        arrayMax = (256.0 * 256.0)
+        ar = array.astype(numpy.float32) / arrayMax
+        interp = np.interp(ar, (0.0, 1.0), (Ntsc.BLACK_LEVEL, 1.0))
+        return (interp * arrayMax).astype(numpy.int32)
     def decode_composite_level(self, array: numpy.ndarray):
-        ar = array.astype(numpy.float32) / 32768.0
-        return (((5.0 * ar - 1.0) / 3.0) * 32768.0).astype(numpy.int32)
+        arrayMax = (256.0 * 256.0)
+        ar = array.astype(numpy.float32) / arrayMax
+        interp = np.interp(ar, (Ntsc.BLACK_LEVEL, 1.0), (0.0, 1.0))
+        return (interp * arrayMax).astype(numpy.int32)
     
-    def chroma_into_luma(self, yiq: numpy.ndarray, field: int, fieldno: int, subcarrier_amplitude: int):
+    def chroma_into_luma(self, yiq: numpy.ndarray, field: int, fieldno: int, subcarrier_amplitude: int, frame: int = 0):
         _, height, width = yiq.shape
         fY, fI, fQ = yiq
         y = field
-
+        
         umult = numpy.tile(Ntsc._Umult, int((width / 4) + 1))
         vmult = numpy.tile(Ntsc._Vmult, int((width / 4) + 1))
 
@@ -525,13 +534,22 @@ class Ntsc:
         umult = numpy.tile(Ntsc._Umult, int((width / 4) + 1))
         vmult = numpy.tile(Ntsc._Vmult, int((width / 4) + 1))
 
+        clpbuffer = [[numpy.zeros(width, dtype=numpy.int32)] * height] * 2
+
+        arrayMax = (256.0 * 256.0)
+
         for y in range(field, height, 2):
             Y = fY[y]
             I = fI[y]
             Q = fQ[y]
-            
+
+            floatY = Y.astype(numpy.float32) / arrayMax
+
             Y[:] = self.decode_composite_level(Y)
 
+            xi = self._chroma_luma_xi(fieldno, y)
+            
+            # 1D comb (blurry)
             sum: int = Y[0] + Y[1]
             y2 = numpy.pad(Y[2:], (0, 2))
             yd4 = numpy.pad(Y[:-2], (2, 0))
@@ -539,11 +557,13 @@ class Ntsc:
             sums0 = numpy.concatenate([numpy.array([sum], dtype=numpy.int32), sums])
             acc = numpy.add.accumulate(sums0, dtype=numpy.int32)[1:]
             acc4 = acc // 4
+
             chroma = y2 - acc4
-            Y[:] = acc4
+            Y[:] = self.decode_composite_level(acc4)
 
-            xi = self._chroma_luma_xi(fieldno, y)
+            # TBA: 2D adaptive comb
 
+            # Extract I and Q from chroma
             x = 4 - xi & 3
             # // flip the part of the sine wave that would correspond to negative U and V values
             chroma[x + 2::4] = -chroma[x + 2::4]
@@ -657,13 +677,21 @@ class Ntsc:
 
         startx = random.Random().randint(0, width)
 
-        multsub = random.Random().uniform(0.86, 0.9)
+        multsub = random.Random().uniform(0.85, 0.9)
+        reverse = bool(random.getrandbits(1))
+
         x = 0
+        add = 0
         while x < width:
             if x >= startx:
                 if mult > 0:
-                    channel[x] += mult
-                    mult *= multsub
+                    if reverse:
+                        channel[x] -= mult
+                    else:
+                        channel[x] += mult
+                    add += 1
+                    if add > 10:
+                        mult *= multsub
             x += 1
     def vhs_tracking_error(self, yiq: numpy.ndarray, field: int = 0, amount: int = 50):
         _, height, width = yiq.shape
@@ -677,13 +705,22 @@ class Ntsc:
                 startx = random.Random().randint(0, width)
 
                 mult = 32768
-                multsub = random.Random().uniform(0.86, 0.9)
+                reverse = bool(random.getrandbits(1))
+
+                multsub = random.Random().uniform(0.8, 0.85)
                 x = 0
+                add = 0
                 while x < width:
                     if x >= startx:
                         if mult > 0:
-                            pY[x] += mult
+                            if reverse:
+                                pY[x] -= mult
+                            else:
+                                pY[x] += mult
                             mult *= multsub
+                            add += 1
+                            if add > 10:
+                                mult *= multsub
                     x += 1
 
     def vhs_chroma_loss(self, yiq: numpy.ndarray, field: int, video_chroma_loss: int):
@@ -717,17 +754,18 @@ class Ntsc:
             self.chroma_into_luma(yiq, field, fieldno, self._subcarrier_amplitude)
             self.chroma_from_luma(yiq, field, fieldno, self._subcarrier_amplitude)
 
-    def composite_layer(self, dst: numpy.ndarray, src: numpy.ndarray, field: int, fieldno: int):
+    def composite_layer(self, dst: numpy.ndarray, src: numpy.ndarray, field: int, fieldno: int, frame: int = 0):
         assert dst.shape == src.shape, "dst and src images must be of same shape"
 
         ogw, ogh, channel = src.shape
 
-        self.fs = (30000.0 / 1001.0) * float(525) * float(ogw) * (858.0 / 720.0)
+        self.fs = (30000.0 / 1001.0) * float(525) * float(ogw) * (858.0 / 760.0)
 
         if self._black_line_cut:
             cut_black_line_border(src)
 
         yiq = bgr2yiq(src)
+
         if self._color_bleed_before and (self._color_bleed_vert != 0 or self._color_bleed_horiz != 0):
             self.color_bleed(yiq, field)
 
@@ -772,8 +810,8 @@ class Ntsc:
         if not self._color_bleed_before and (self._color_bleed_vert != 0 or self._color_bleed_horiz != 0):
             self.color_bleed(yiq, field)
 
-        # if self._ringing != 1.0:
-        #     self.ringing(yiq, field)
+        #if self._ringing != 1.0:
+        #    self.ringing(yiq, field)
 
         Y, I, Q = yiq
 
@@ -812,7 +850,7 @@ def random_ntsc(seed=None) -> Ntsc:
     ntsc._composite_out_chroma_lowpass = rnd.random() < 0.8  # lean towards default value
     ntsc._composite_out_chroma_lowpass_lite = rnd.random() < 0.8  # lean towards default value
     ntsc._video_chroma_noise = int(rnd.triangular(0, 16384, 2))
-    ntsc._video_chroma_phase_noise = int(rnd.triangular(0, 50, 2))
+    #ntsc._video_chroma_phase_noise = int(rnd.triangular(0, 50, 2))
     ntsc._video_chroma_loss = int(rnd.triangular(0, 800, 10))
     ntsc._video_noise = int(rnd.triangular(0, 4200, 2))
     ntsc._emulating_vhs = rnd.random() < 0.2  # lean towards default value
@@ -820,7 +858,7 @@ def random_ntsc(seed=None) -> Ntsc:
     ntsc._vhs_tracking_noise = int(rnd.triangular(0, 800, 2))
     ntsc._video_scanline_phase_shift = rnd.choice([0, 90, 180, 270])
     ntsc._video_scanline_phase_shift_offset = rnd.randint(0, 3)
-    ntsc._output_vhs_tape_speed = rnd.choice([VHSSpeed.VHS_SP, VHSSpeed.VHS_LP, VHSSpeed.VHS_EP])
+    #ntsc._output_vhs_tape_speed = rnd.choice([VHSSpeed.VHS_SP, VHSSpeed.VHS_LP, VHSSpeed.VHS_EP])
     enable_ringing = rnd.random() < 0.8
     if enable_ringing:
         ntsc._ringing = rnd.uniform(0.3, 0.7)

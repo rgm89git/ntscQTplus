@@ -60,12 +60,12 @@ class DefaultRenderer(AbstractRenderer):
     buffer: dict[int, ndarray] = defaultdict(lambda: None)
 
     @staticmethod
-    def apply_main_effect(nt: Ntsc, frame1, frame2=None):
+    def apply_main_effect(nt: Ntsc, frame1, frame2=None, frameId=0):
         #raise NotImplementedError()
         if frame2 is None:
             frame2 = frame1
 
-        frame1 = nt.composite_layer(frame1, frame2, field=0, fieldno=2)
+        frame1 = nt.composite_layer(frame1, frame2, field=0, fieldno=2, frame=frameId)
         frame1 = cv2.convertScaleAbs(frame1)
 
         # Using warpAffine temporary while finding another fix
@@ -164,6 +164,7 @@ class DefaultRenderer(AbstractRenderer):
                 nt=self.render_data.get("nt"),
                 frame1=frame1,
                 frame2=frame2,
+                frameId=self.show_frame_index
             )
         else:
             frame = frame1
