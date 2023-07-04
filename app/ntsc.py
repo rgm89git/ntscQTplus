@@ -559,7 +559,7 @@ class Ntsc:
             acc4 = acc // 4
 
             chroma = y2 - acc4
-            Y[:] = self.decode_composite_level(acc4)
+            Y[:] = acc4
 
             # TBA: 2D adaptive comb
 
@@ -707,7 +707,7 @@ class Ntsc:
                 mult = 32768
                 reverse = bool(random.getrandbits(1))
 
-                multsub = random.Random().uniform(0.8, 0.85)
+                multsub = random.Random().uniform(0.85, 0.9)
                 x = 0
                 add = 0
                 while x < width:
