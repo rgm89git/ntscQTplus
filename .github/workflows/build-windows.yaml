@@ -42,11 +42,12 @@ jobs:
         uses: suisei-cn/actions-download-file@v1
         id: downloadfile  # Remember to give an ID if you need the output
         with:
-          url: "https://github.com/ShareX/FFmpeg/releases/download/v4.3.1/ffmpeg-4.3.1-win64.zip"
+          url: "https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z"
           target: .
+          filename: "ffmpeg.7z"
 
       - name: Unzip FFmpeg
-        run: 7z x ffmpeg-4.3.1-win64.zip
+        run: 7z x '-i!ffmpeg-2023-10-04-git-9078dc0c52-essentials_build/bin/ffmpeg.exe' ffmpeg.7z
 
       - name: List all files - Before compile
         run: ls
