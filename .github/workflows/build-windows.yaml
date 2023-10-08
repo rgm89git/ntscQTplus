@@ -47,7 +47,7 @@ jobs:
           filename: "ffmpeg.7z"
 
       - name: Unzip FFmpeg
-        run: 7z x '-i!ffmpeg-2023-10-04-git-9078dc0c52-essentials_build/bin/ffmpeg.exe' ffmpeg.7z
+        run: 7z x ffmpeg.7z
 
       - name: List all files - Before compile
         run: ls
