@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+import traceback
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QLibraryInfo
@@ -24,7 +25,7 @@ os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = QLibraryInfo.location(
 def crash_handler(etype, value, tb):
     logger.trace(value)
     traceback.print_exception(etype, value, tb)
-    logger.exception("Uncaught exception: {0}".format(str(value)))
+    logger.error("Uncaught exception: {0}\n{1}".format(str(value), "\n".join(traceback.format_tb(tb))))
     sys.exit(1)
 
 def cls():
@@ -38,11 +39,11 @@ def main():
     locale = QtCore.QLocale.system().name()
 
     cls()
-    print(f"{colorama.Back.BLUE + colorama.Fore.BLACK}--- ntscQT+ ---{colorama.Style.RESET_ALL}")
-    print(f"by RGM, based on JargeZ's "+'\x1B[3m'+"ntscQT"+'\x1B[0m')
-    print("")
+    print("📼 ntscQT+")
+    #print(f"by RGM, based on JargeZ's "+'\x1B[3m'+"ntscQT"+'\x1B[0m')
+    #print("")
 
-    spinner = Halo(text='Loading...',color='white')
+    spinner = Halo(text='',color='white')
     spinner.start()
 
     # if run by pyinstaller executable, frozen attr will be true
@@ -60,7 +61,7 @@ def main():
     app.setWindowIcon(QtGui.QIcon(QtGui.QPixmap("./icon.png")))
     app.installTranslator(translator)
 
-    qdarktheme.setup_theme("dark")
+    qdarktheme.setup_theme("dark",corner_shape="sharp")
 
     spinner.stop()
     print("Loaded.")
@@ -72,7 +73,7 @@ def main():
         print("Using default translation")
 
     window = NtscApp()
-    window.show()
+    window.showMaximized()
     sys.exit(app.exec_())
 
 

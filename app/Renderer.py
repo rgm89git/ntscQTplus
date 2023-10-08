@@ -35,7 +35,7 @@ class AbstractRenderer(QtCore.QObject):
 
     @staticmethod
     @abc.abstractmethod
-    def apply_main_effect(nt: Ntsc, frame1, frame2=None):
+    def apply_main_effect(nt: Ntsc, frame1, frame2, frameno: int):
         raise NotImplementedError()
 
 
@@ -60,19 +60,18 @@ class DefaultRenderer(AbstractRenderer):
     buffer: dict[int, ndarray] = defaultdict(lambda: None)
 
     @staticmethod
-    def apply_main_effect(nt: Ntsc, frame1, frame2=None, frameId=0):
+    def apply_main_effect(nt: Ntsc, frame1, frame2, frameno: int):
         #raise NotImplementedError()
         if frame2 is None:
             frame2 = frame1
 
-        frame1 = nt.composite_layer(frame1, frame2, field=0, fieldno=2, frame=frameId)
+        frame1 = nt.composite_layer(frame1, frame1, field=0, fieldno=0, frameno=frameno)
         frame1 = cv2.convertScaleAbs(frame1)
 
-        # Using warpAffine temporary while finding another fix
-        #frame2 = cv2.warpAffine(frame2, numpy.float32([[1, 0, 0], [0, 1, 1]]), (frame2.shape[1], frame2.shape[0]+2))
-        frame2 = cv2.copyMakeBorder(frame1,1,0,0,0,cv2.BORDER_CONSTANT)
-        #frame2 = nt.composite_layer(frame2, frame2, field=2, fieldno=2)
-        #frame2 = cv2.convertScaleAbs(frame2)
+        frame2 = cv2.copyMakeBorder(frame2,1,0,0,0,cv2.BORDER_CONSTANT)
+        frame2 = nt.composite_layer(frame2, frame2, field=2, fieldno=2, frameno=frameno)
+        frame2 = cv2.convertScaleAbs(frame2)
+        
         frame = frame1
         frame[1::2,:] = frame2[2::2,:]
         return frame
@@ -161,10 +160,10 @@ class DefaultRenderer(AbstractRenderer):
 
         if self.mainEffect:
             frame = self.apply_main_effect(
-                nt=self.render_data.get("nt"),
-                frame1=frame1,
-                frame2=frame2,
-                frameId=self.show_frame_index
+                self.render_data.get("nt"),
+                frame1,
+                frame2,
+                self.show_frame_index
             )
         else:
             frame = frame1
@@ -186,7 +185,7 @@ class DefaultRenderer(AbstractRenderer):
             self.render_data["input_video"]["width"],
             self.render_data["input_video"]["height"]
         )
-        render_wh = resize_to_height(orig_wh, self.render_data["input_heigth"])
+        render_wh = resize_to_height(orig_wh, self.render_data["input_height"])
         container_wh = render_wh
 
         upscale_2x = self.render_data["upscale_2x"]
@@ -238,7 +237,7 @@ class DefaultRenderer(AbstractRenderer):
 
         suffix = '.mkv'
 
-        print(self.config.get("lossless"))
+        #print(self.config.get("lossless"))
 
         tmp_output = self.render_data['target_file'].parent / f'tmp_{self.render_data["target_file"].stem}{suffix}'
 
@@ -260,7 +259,7 @@ class DefaultRenderer(AbstractRenderer):
             framerate = self.render_data["input_video"]["orig_fps"]
         
         self.framecount = self.config.get("framecount")
-        print(self.framecount)
+        #print(self.framecount)
         
         video = cv2.VideoWriter()
 
@@ -278,6 +277,7 @@ class DefaultRenderer(AbstractRenderer):
         logger.debug(f'Temp output: {str(tmp_output.resolve())}')
         logger.debug(f'Output video: {str(self.render_data["target_file"].resolve())}')
         #logger.debug(f'Process audio: {self.process_audio}')
+        logger.debug(f'Process audio: {str(self.config.get("audio_process"))}')
 
         self.current_frame_index = 0
         self.show_frame_index = 0
@@ -348,7 +348,7 @@ class DefaultRenderer(AbstractRenderer):
 
         final_audio = orig.audio
 
-        if(self.config.get("audio_process") == True):
+        if(self.config.get('audio_process')):
             self.sendStatus.emit(f'[FFMPEG] Preparing audio filtering')
 
             #tmp_audio = self.render_data['target_file'].parent / f'tmp_audio_{self.render_data["target_file"].stem}.wav'
@@ -366,10 +366,10 @@ class DefaultRenderer(AbstractRenderer):
 
             aud_ff_noise = ffmpeg.input(f'aevalsrc=-2+random(0):sample_rate={aud_ff_srate}:channel_layout=mono',f="lavfi",t=aud_ff_duration)
             aud_ff_noise = ffmpeg.filter((aud_ff_noise, aud_ff_noise), 'join', inputs=2, channel_layout='stereo')
-            aud_ff_noise = aud_ff_noise.filter('volume', self.audio_noise_volume)
+            aud_ff_noise = aud_ff_noise.filter('volume', self.config.get('audio_noise_volume'))
 
-            aud_ff_fx = final_audio.filter("volume",self.audio_sat_beforevol).filter("alimiter",limit="0.5").filter("volume",0.8)
-            aud_ff_fx = aud_ff_fx.filter("firequalizer",gain=f'if(lt(f,{self.audio_lowpass}), 0, -INF)')
+            aud_ff_fx = final_audio.filter("volume",self.config.get('audio_sat_beforevol')).filter("alimiter",limit="0.5").filter("volume",0.8)
+            aud_ff_fx = aud_ff_fx.filter("firequalizer",gain=f'if(lt(f,{self.config.get("audio_lowpass")}), 0, -INF)')
 
             aud_ff_mix = ffmpeg.filter([aud_ff_fx, aud_ff_noise], 'amix').filter("firequalizer",gain='if(lt(f,13301), 0, -INF)')
 
