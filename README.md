@@ -1,3 +1,24 @@
+# ARCHIVED! NTSC tooling moved to [ntsc-rs](https://ntsc.rs/)
+**Dec. 14, 2024:** Hi, guys. So after a lot of thinking, i've decided to **ARCHIVE** this project. Here's the reasons:
+- Recently, **valadaptive** released [**ntsc-rs**](https://ntsc.rs/), a recreation of ntsc-qt in Rust, that has a lot of advantages: It's optimized, faster, renders in real-time and has most support for features and presets. Because of this project, i've now considered all ntsc-qt Python related projects obsolete, including this.
+- I've moved all new projects to [Codeberg](https://codeberg.org/RGMOfficial), and want to focus this account for more internal things, like pull requests.
+- Also, time is eating me.
+
+I would like to thank everyone for their tremendous collaboration on this project:
+- [joncampbell123](https://github.com/joncampbell123), for creating the original project
+- [zhuker](https://github.com/zhuker), for porting it to **Python**
+- [JargeZ](https://github.com/JargeZ), for creating **ntsc-qt**, the project on which this was based.
+- [Sergey](https://github.com/SergeyMC9730) and others who helped with collaborations, pull requests, issues, and more.
+
+I thank you from **the bottom of my heart**. It was a very interesting project to work on. Now it's time to move on to other paths. Long life to **ntsc-rs**, which will carry on this legacy we helped strengthen. Until next time. Goodbye, from 🇧🇷. 💜 👍
+
+<p align="center">
+	<a href="https://ntsc.rs"><img src="https://github.com/user-attachments/assets/4ecd3303-4626-4125-b817-6e64347bc91d" height="62"></a><br>
+	<a href="https://github.com/valadaptive/ntsc-rs"><img src="https://img.shields.io/github/commit-activity/m/valadaptive/ntsc-rs?colorA=363a4f&colorB=a6da95&style=for-the-badge"></a>
+</p>
+
+<hr />
+
 <p align="center">
    <img src="docs/logo/fulllogo_white.svg" alt="ntscQT+" style="height: 80px;" height="80px">
 </p>
